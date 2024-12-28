@@ -34,5 +34,5 @@ def favicon():
 
 if __name__ == "__main__":
     # Porta definida pelo Railway ou 8080 como fallback
-    port = int(os.getenv("PORT", 5000))
+    port = int(os.getenv("PORT", 8080))
     app.run(host="0.0.0.0", port=port)

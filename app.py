@@ -1,16 +1,15 @@
 import os
-import pymysql
 from flask import Flask
-
+import pymysql
 
 app = Flask(__name__)
 
-# Configuração do banco de dados
+# Configuração do banco de dados (usando variáveis de ambiente)
 db_config = {
-    "host": os.getenv("MYSQLHOST", "localhost"),       # Lê da variável de ambiente ou usa "localhost" como padrão
-    "port": int(os.getenv("MYSQLPORT", 3306)),        # Porta definida no Railway
-    "user": os.getenv("MYSQLUSER", "root"),           # Usuário definido no Railway
-    "password": os.getenv("SENHA_MYSQL", ""),         # Senha definida no Railway
+    "host": os.getenv("MYSQLHOST", "localhost"),  # Host do banco de dados
+    "port": int(os.getenv("MYSQLPORT", 3306)),    # Porta do banco
+    "user": os.getenv("MYSQLUSER", "root"),       # Usuário do banco
+    "password": os.getenv("SENHA_MYSQL", ""),     # Senha do banco
     "database": os.getenv("MYSQL_BANCO_DE_DADOS", "test")  # Nome do banco
 }
 
@@ -21,12 +20,19 @@ def home():
 @app.route('/testar_conexao')
 def testar_conexao():
     try:
+        # Testa a conexão com o banco de dados
         connection = pymysql.connect(**db_config)
-        connection.close()
+        connection.close()  # Fecha a conexão após o teste
         return "Conexão ao banco de dados bem-sucedida!"
     except Exception as e:
         return f"Erro ao conectar ao banco de dados: {e}"
 
+# Para evitar erros relacionados ao favicon em navegadores
+@app.route('/favicon.ico')
+def favicon():
+    return "", 204
+
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8080))  # Porta definida pelo Railway
+    # Porta definida pelo Railway ou 8080 como fallback
+    port = int(os.getenv("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
